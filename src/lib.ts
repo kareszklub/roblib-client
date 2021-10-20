@@ -1,4 +1,4 @@
-import type { io as ioType } from 'socket.io-client'; // remove in browser
+import type { io as ioType } from 'socket.io-client';
 
 let socket: ReturnType<typeof ioType>;
 
