@@ -1,6 +1,6 @@
-import * as io from 'socket.io-client'; // remove in browser
+import type { io as ioType } from 'socket.io-client'; // remove in browser
 
-let socket: ReturnType<io.Manager['socket']>;
+let socket: ReturnType<typeof ioType>;
 
 /**
  * Kapcsolatot létesít a robottal,
@@ -13,11 +13,9 @@ let socket: ReturnType<io.Manager['socket']>;
  * move({left: 50, right: 50});
  * ```
  */
-export const init = async (ip: string) => {
-	const man = new io.Manager(ip);
-
+export const init = async (io: typeof ioType, ip: string) => {
 	// create socket
-	socket = man.socket('/io', {});
+	socket = io('/io', {});
 
 	// connected to server
 	return new Promise<typeof socket>((res, rej) => {
@@ -60,8 +58,7 @@ export const LED = ({ r = false, g = false, b = false } = {}) => {
  * @param pw - frekvencia (0-100), 100 = csend
  */
 export const buzzer = (pw = 100) => {
-	if (pw < 0 || pw > 100)
-		throw 'PW values should be between 0 and 100';
+	if (pw < 0 || pw > 100) throw 'PW values should be between 0 and 100';
 	socket.emit('buzzer', { pw });
 };
 
@@ -72,7 +69,7 @@ export const buzzer = (pw = 100) => {
  *  ***WARNING: maradandóan lekapcsolja a motorokat,
  * a robotot megállítására:*** `move()`
  */
-export const stop = () => { socket.emit('stop'); }
+export const stop = () => void socket.emit('stop');
 
 /**
  * Vár `ms` milliszekundumot, az `await` kulcsszóval kell használni.
@@ -102,7 +99,6 @@ export const servo = (absoluteDegree: number) => {
  * (ne add meg, ha valaki más még használná)
  */
 export const exit = (stops = false) => {
-	if (stops)
-		stop();
+	if (stops) stop();
 	socket.close();
 };
