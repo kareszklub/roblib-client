@@ -15,7 +15,7 @@ let socket: ReturnType<typeof ioType>;
  */
 export const init = async (io: typeof ioType, ip: string) => {
 	// create socket
-	socket = io(`${ip}/io`, {});
+	socket = io(`http://${ip}/io`, {});
 
 	// connected to server
 	return new Promise<typeof socket>((res, rej) => {
