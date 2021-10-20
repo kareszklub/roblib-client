@@ -24,14 +24,16 @@ export const init = async (io: typeof ioType, ip: string) => {
 	});
 };
 
+export type TrackSensorData = [number, number, number, number];
+
 /**
  * A robot alján lévő szenzorok adataiak megszerzése.
  * @returns a négy szenzor értékei
  */
 export const getSensorData = () => {
 	socket.emit('tracksensor');
-	return new Promise<[number, number, number, number]>(res =>
-		socket.once('return-tracksensor', ({ data }) => res(data))
+	return new Promise<TrackSensorData>(res =>
+		socket.once('return-tracksensor', ({ data }: { data: TrackSensorData; }) => res(data))
 	);
 };
 
@@ -58,7 +60,8 @@ export const LED = ({ r = false, g = false, b = false } = {}) => {
  * @param pw - frekvencia (0-100), 100 = csend
  */
 export const buzzer = (pw = 100) => {
-	if (pw < 0 || pw > 100) throw 'PW values should be between 0 and 100';
+	if (pw < 0 || pw > 100)
+		throw 'PW values should be between 0 and 100';
 	socket.emit('buzzer', { pw });
 };
 
@@ -69,7 +72,7 @@ export const buzzer = (pw = 100) => {
  *  ***WARNING: maradandóan lekapcsolja a motorokat,
  * a robotot megállítására:*** `move()`
  */
-export const stop = () => void socket.emit('stop');
+export const stop = () => { socket.emit('stop'); }
 
 /**
  * Vár `ms` milliszekundumot, az `await` kulcsszóval kell használni.
@@ -99,6 +102,7 @@ export const servo = (absoluteDegree: number) => {
  * (ne add meg, ha valaki más még használná)
  */
 export const exit = (stops = false) => {
-	if (stops) stop();
+	if (stops)
+		stop();
 	socket.close();
 };
