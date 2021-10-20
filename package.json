@@ -1,0 +1,28 @@
+{
+	"name": "@kareszklub/roblib-client",
+	"version": "1.0.0",
+	"description": "A remote library for a dank engine.",
+	"type": "module",
+	"main": "out/lib.js",
+	"engines": {
+		"node": ">=14.8"
+	},
+	"dependencies": {
+		"dotenv": "^10.0.0",
+		"node-fetch": "^2.6.1",
+		"socket.io-client": "^4.1.3"
+	},
+	"devDependencies": {
+		"typescript": "^4.4.4"
+	},
+	"scripts": {
+		"postinstall": "./build.sh",
+		"build": "./build.sh",
+		"clean": "rm -rf out",
+		"dev": "npx tsc -w"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/kareszklub/roblib-client.git"
+	}
+}
