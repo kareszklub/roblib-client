@@ -1,28 +1,27 @@
 {
-	"name": "@kareszklub/roblib-client",
-	"version": "2.0.0-alpha.1",
-	"description": "A remote library for a dank engine.",
-	"license": "LGPL-3.0",
-	"main": "out/client-node.js",
-	"engines": {
-		"node": ">=14.8"
-	},
-	"dependencies": {
-		"ws": "^8.4.0"
-	},
-	"devDependencies": {
-		"@types/node": "^17.0.6",
-		"@types/ws": "^8.2.2",
-		"esbuild": "^0.14.10",
-		"typescript": "^4.5.4"
-	},
-	"scripts": {
-		"check": "tsc --noEmit",
-		"build": "npm run build:node",
-		"build:node": "esbuild src/client-node.ts --platform=node --minify --sourcemap --outdir=out"
-	},
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/kareszklub/roblib-client.git"
-	}
+    "name": "@kareszklub/roblib-client",
+    "version": "2.0.0-alpha.1",
+    "description": "A remote library for a dank engine.",
+    "license": "LGPL-3.0",
+    "main": "out/client-node.js",
+    "engines": {
+        "node": ">=14.8"
+    },
+    "dependencies": {
+        "ws": "^8.4.0"
+    },
+    "devDependencies": {
+        "@types/node": "^17.0.6",
+        "@types/ws": "^8.2.2",
+        "typescript": "^4.5.4"
+    },
+    "scripts": {
+        "check": "tsc --noEmit",
+        "build": "tsc",
+        "postinstall": "npm run build"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/kareszklub/roblib-client.git"
+    }
 }
