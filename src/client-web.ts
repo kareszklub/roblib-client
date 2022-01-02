@@ -1,40 +1,38 @@
-import WebSocket from "ws";
+if (!("WebSocket" in window)) {
+    alert("WebSocket not supported by your browser.");
+}
 
 export class Robot {
     private ws: WebSocket;
 
-    private constructor(addr: string, options?: WebSocket.ClientOptions) {
-        this.ws = new WebSocket(addr, options);
+    private constructor(addr: string) {
+        this.ws = new WebSocket(addr);
     }
 
-    static async connect(
-        addr: string,
-        options?: WebSocket.ClientOptions
-    ): Promise<Robot> {
-        const r = new Robot(addr, options);
+    static async connect(addr: string): Promise<Robot> {
+        const r = new Robot(addr);
         return new Promise((res, rej) => {
-            r.ws.on("open", () => res(r));
-            r.ws.on("error", err => rej(err));
+            r.ws.addEventListener("open", () => res(r), { once: true });
+            r.ws.addEventListener("error", () => rej(r), { once: true });
         });
     }
 
     private send(cmd: string) {
-        return new Promise<void>((res, rej) => {
+        return new Promise<void>((res, _) => {
             this.ws.send(cmd);
-            this.ws.once("message", msg => {
-                const m = msg.toString();
-                if (m === "OK") {
-                    console.log("OK");
-                    return void res();
-                }
-                rej(new Error(m));
-            });
+            this.ws.addEventListener(
+                "message",
+                msg => res(void console.log(msg.data)),
+                { once: true }
+            );
         });
     }
     private send_receive(cmd: string): Promise<string> {
         return new Promise<string>((res, _) => {
             this.ws.send(cmd);
-            this.ws.once("message", msg => res(msg.toString()));
+            this.ws.addEventListener("message", msg => res(msg.data), {
+                once: true,
+            });
         });
     }
 
