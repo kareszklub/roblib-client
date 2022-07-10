@@ -20,7 +20,7 @@ class Robot {
         const r = new Robot(addr);
         return new Promise((res, rej) => {
             r.ws.addEventListener("open", () => res(r), { once: true });
-            r.ws.addEventListener("error", () => rej(r), { once: true });
+            r.ws.addEventListener("error", rej, { once: true });
         });
     }
 
