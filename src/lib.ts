@@ -1,8 +1,15 @@
-if (!("WebSocket" in window)) {
-    alert("WebSocket not supported by your browser.");
+// @ts-ignore
+let WebSocket: typeof window.WebSocket;
+if ("window" in globalThis) {
+    // we're in a browser
+    WebSocket = window.WebSocket;
+} else {
+    // not in a browser: node
+    WebSocket = require("ws");
 }
+if (!WebSocket) throw new Error("failed to find websocket client")
 
-export class Robot {
+class Robot {
     private ws: WebSocket;
 
     private constructor(addr: string) {
@@ -48,4 +55,6 @@ export class Robot {
         (await this.send_receive("t")).split(",").map(Number);
 }
 
-export const sleep = (ms: number) => new Promise(res => setTimeout(res, ms));
+const sleep = (ms: number) => new Promise(res => setTimeout(res, ms));
+
+module.exports = { Robot, sleep }
