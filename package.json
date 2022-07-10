@@ -4,6 +4,7 @@
     "description": "A remote library for a dank engine.",
     "license": "LGPL-3.0",
     "main": "out/lib.js",
+    "types": "out/lib.d.ts",
     "repository": {
         "type": "git",
         "url": "https://github.com/kareszklub/roblib-client.git"
