@@ -16,7 +16,7 @@ class Robot {
         this.ws = new WebSocket(addr);
     }
 
-    static async connect(addr: string): Promise<Robot> {
+    static connect(addr: string): Promise<Robot> {
         const r = new Robot(addr);
         return new Promise((res, rej) => {
             r.ws.addEventListener("open", () => res(r), { once: true });
