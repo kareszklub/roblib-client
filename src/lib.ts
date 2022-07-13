@@ -1,23 +1,23 @@
 // @ts-ignore
-let WebSocket: typeof window.WebSocket;
+let ws: Promise<typeof window.WebSocket>;
 if ("window" in globalThis) {
     // we're in a browser
-    WebSocket = window.WebSocket;
+    ws = Promise.resolve(window.WebSocket);
 } else {
     // not in a browser: node
-    WebSocket = require("ws");
+    ws = import("ws") as unknown as typeof ws;
 }
-if (!WebSocket) throw new Error("failed to find websocket client")
+if (!ws) throw new Error("failed to find websocket client")
 
-class Robot {
+export class Robot {
     private ws: WebSocket;
 
-    private constructor(addr: string) {
-        this.ws = new WebSocket(addr);
+    private constructor(ws:typeof window.WebSocket, addr: string) {
+        this.ws = new ws(addr);
     }
 
-    static connect(addr: string): Promise<Robot> {
-        const r = new Robot(addr);
+    static async connect(addr: string): Promise<Robot> {
+        const r = new Robot(await ws, addr);
         return new Promise((res, rej) => {
             r.ws.addEventListener("open", () => res(r), { once: true });
             r.ws.addEventListener("error", rej, { once: true });
@@ -55,6 +55,4 @@ class Robot {
         (await this.send_receive("t")).split(",").map(Number);
 }
 
-const sleep = (ms: number) => new Promise(res => setTimeout(res, ms));
-
-module.exports = { Robot, sleep }
+export const sleep = (ms: number) => new Promise(res => setTimeout(res, ms));
