@@ -5,7 +5,7 @@ if ("window" in globalThis) {
     ws = Promise.resolve(window.WebSocket);
 } else {
     // not in a browser: node
-    ws = import("ws") as unknown as typeof ws;
+    ws = import("ws").then(ws => ws.WebSocket) as typeof ws;
 }
 if (!ws) throw new Error("failed to find websocket client")
 
