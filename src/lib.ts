@@ -1,108 +1,58 @@
-import type { io as ioType } from 'socket.io-client';
+// @ts-ignore
+let ws: Promise<typeof window.WebSocket>;
+if ("window" in globalThis) {
+    // we're in a browser
+    ws = Promise.resolve(window.WebSocket);
+} else {
+    // not in a browser: node
+    ws = import("ws").then(ws => ws.WebSocket) as typeof ws;
+}
+if (!ws) throw new Error("failed to find websocket client")
 
-let socket: ReturnType<typeof ioType>;
+export class Robot {
+    private ws: WebSocket;
 
-/**
- * Kapcsolatot létesít a robottal,
- * használat előtt az `await` kulcsszóval meg kell várni,
- * először mindig ezt kell meghívni.
- * @param ip - IP:PORT
- * @returns socket.io socket
- * @example ```ts
- * await init('192.168.0.1:5000');
- * move({left: 50, right: 50});
- * ```
- */
-export const init = async (io: typeof ioType, ip: string) => {
-	// create socket
-	socket = io(`http://${ip}/io`, {});
+    private constructor(ws:typeof window.WebSocket, addr: string) {
+        this.ws = new ws(addr);
+    }
 
-	// connected to server
-	return new Promise<typeof socket>((res, rej) => {
-		socket.on('connect', () => res(socket));
-		socket.on('connect_error', rej);
-	});
-};
+    static async connect(addr: string): Promise<Robot> {
+        const r = new Robot(await ws, addr);
+        return new Promise((res, rej) => {
+            r.ws.addEventListener("open", () => res(r), { once: true });
+            r.ws.addEventListener("error", rej, { once: true });
+        });
+    }
 
-export type TrackSensorData = [number, number, number, number];
+    private send(cmd: string) {
+        return new Promise<void>((res, _) => {
+            this.ws.send(cmd);
+            this.ws.addEventListener(
+                "message",
+                msg => res(void console.log(msg.data)),
+                { once: true }
+            );
+        });
+    }
+    private send_receive(cmd: string): Promise<string> {
+        return new Promise<string>((res, _) => {
+            this.ws.send(cmd);
+            this.ws.addEventListener("message", msg => res(msg.data), {
+                once: true,
+            });
+        });
+    }
 
-/**
- * A robot alján lévő szenzorok adataiak megszerzése.
- * @returns a négy szenzor értékei
- */
-export const getSensorData = () => {
-	socket.emit('tracksensor');
-	return new Promise<TrackSensorData>(res =>
-		socket.once('return-tracksensor', ({ data }: { data: TrackSensorData; }) => res(data))
-	);
-};
+    disconnect = () => this.ws.close();
 
-/**
- * Mozgatja a lánctalp motorokat.
- * @param - left: bal motor speed, right: jobb motor speed (0-100)
- */
-export const move = ({ left = 0, right = 0 } = {}) => {
-	if (left < -100 || left > 100 || right < -100 || right > 100)
-		throw `Values should be between -100 and 100`;
-	socket.emit('move', { left, right });
-};
+    move = (left: number, right: number) => this.send(`m ${left} ${right}`);
+    stop = () => this.send("s");
+    led = ({ r, g, b }: { r: boolean; g: boolean; b: boolean }) =>
+        this.send(`l ${Number(r)} ${Number(g)} ${Number(b)}`);
+    servo = (angle: number) => this.send(`v ${angle}`);
+    buzzer = (freq: number) => this.send(`b ${freq}`);
+    getSensorData = async () =>
+        (await this.send_receive("t")).split(",").map(Number);
+}
 
-/**
- * A robot elején lévő LED-ek színét állítja.
- * @param - r, g, b: true/false -> világítson-e vagy ne
- */
-export const LED = ({ r = false, g = false, b = false } = {}) => {
-	socket.emit('led', { r, g, b });
-};
-
-/**
- * A robot berregőjét irányítja.
- * @param pw - frekvencia (0-100), 100 = csend
- */
-export const buzzer = (pw = 100) => {
-	if (pw < 0 || pw > 100)
-		throw 'PW values should be between 0 and 100';
-	socket.emit('buzzer', { pw });
-};
-
-/**
- * A robot motorjainak elektronikájáról lecsapja az áramot,
- * a roboton a szervert újra kell indítani, hogy újra működjön.
- *
- *  ***WARNING: maradandóan lekapcsolja a motorokat,
- * a robotot megállítására:*** `move()`
- */
-export const stop = () => { socket.emit('stop'); }
-
-/**
- * Vár `ms` milliszekundumot, az `await` kulcsszóval kell használni.
- * @param ms - mennyi ideig
- * @example ```ts
- * console.log('most');
- * await sleep(1000);
- * console.log('1 másodperc múlva');
- * ```
- */
-export const sleep = (ms: number) =>
-	new Promise<void>(res => setTimeout(res, ms));
-
-/**
- * A robot *'fejének'* (szervó motor) forgatása.
- * @param absoluteDegree - hány fokot forduljon (-90 - 90) 0 = előre néz
- */
-export const servo = (absoluteDegree: number) => {
-	if (absoluteDegree < -90 || absoluteDegree > 90)
-		throw 'Values should be between -90 and 90';
-	socket.emit('servo', { degree: absoluteDegree });
-};
-
-/**
- * Megszakítja a robottal a kapcsolatot.
- * @param stops - véglegesen leállítsuk-e a robot motorjait
- * (ne add meg, ha valaki más még használná)
- */
-export const exit = (stops = false) => {
-	if (stops)
-		stop();
-	socket.close();
-};
+export const sleep = (ms: number) => new Promise(res => setTimeout(res, ms));
