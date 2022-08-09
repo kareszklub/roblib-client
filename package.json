@@ -1,26 +1,35 @@
 {
-	"name": "@kareszklub/roblib-client",
-	"version": "1.0.0",
-	"description": "A remote library for a dank engine.",
-	"type": "module",
-	"main": "out/lib.js",
-	"engines": {
-		"node": ">=14.8"
-	},
-	"dependencies": {
-		"socket.io-client": "^4.3.2"
-	},
-	"devDependencies": {
-		"typescript": "^4.4.4"
-	},
-	"scripts": {
-		"postinstall": "tsc -p .",
-		"build": "tsc -p .",
-		"dev": "tsc -p . -w",
-		"clean": "rm -rf out"
-	},
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/kareszklub/roblib-client.git"
-	}
+    "name": "@kareszklub/roblib-client",
+    "version": "2.0.0-alpha.5",
+    "description": "A remote library for a dank engine.",
+    "license": "LGPL-3.0",
+    "main": "out/lib.js",
+    "browser": "out/browser.js",
+    "types": "out/lib.d.ts",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/kareszklub/roblib-client.git"
+    },
+    "engines": {
+        "node": ">=14.8"
+    },
+    "dependencies": {
+        "ws": "^8.8.0"
+    },
+    "devDependencies": {
+        "@tsconfig/node16": "^1.0.3",
+        "@types/ws": "^8.5.3",
+        "esbuild": "^0.14.49",
+        "typescript": "^4.7.4"
+    },
+    "scripts": {
+        "check": "tsc --noEmit",
+        "build:node": "tsc",
+        "build:browser": "esbuild src/lib.ts --outfile=out/browser.js --sourcemap",
+        "build": "npm run build:node && npm run build:browser",
+        "clean": "node -e \"require('fs').rmSync('out',{recursive:true})\""
+    },
+    "files": [
+        "/out"
+    ]
 }
