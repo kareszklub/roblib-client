@@ -12,7 +12,7 @@ if (!ws) throw new Error("failed to find websocket client")
 export class Robot {
     private ws: WebSocket;
 
-    private constructor(ws:typeof window.WebSocket, addr: string) {
+    private constructor(ws: typeof window.WebSocket, addr: string) {
         this.ws = new ws(addr);
     }
 
@@ -45,6 +45,12 @@ export class Robot {
 
     disconnect = () => this.ws.close();
 
+    // generic
+    setPin = (pin: number, value: boolean) => this.send(`p ${pin} ${Number(value)}`)
+    setPwm = (pin: number, hz: number, cycle: number) => this.send(`w ${pin} ${hz} ${cycle}`)
+    servoBasic = (pin: number, angle: number) => this.send(`V ${pin} ${angle}`)
+
+    // roland specific
     move = (left: number, right: number) => this.send(`m ${left} ${right}`);
     stop = () => this.send("s");
     led = ({ r, g, b }: { r: boolean; g: boolean; b: boolean }) =>
@@ -53,6 +59,7 @@ export class Robot {
     buzzer = (freq: number) => this.send(`b ${freq}`);
     getSensorData = async () =>
         (await this.send_receive("t")).split(",").map(Number);
+
 }
 
 export const sleep = (ms: number) => new Promise(res => setTimeout(res, ms));
