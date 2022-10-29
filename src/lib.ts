@@ -76,7 +76,7 @@ export class Robot {
     moveByAngle = (angle: number, speed: number) =>
         this.useWasm
             ? this.send(wasm.move_robot_by_angle(angle, speed))
-            : this.send(`M ${angle} ${speed}`);
+            : this.send(`M ${angle} ${speed} 0`);
     moveByAngleWithLeds = (
         angle: number,
         speed: number,
@@ -87,7 +87,7 @@ export class Robot {
                   wasm.move_robot_by_angle_with_leds(angle, speed, r, g, b)
               )
             : this.send(
-                  `M ${angle} ${speed} ${Number(r)} ${Number(g)} ${Number(b)}`
+                  `M ${angle} ${speed} 1 ${Number(r)} ${Number(g)} ${Number(b)}`
               );
     stop = () => (this.useWasm ? this.send(wasm.stop_robot()) : this.send("s"));
     led = ({ r, g, b }: { r: boolean; g: boolean; b: boolean }) =>
