@@ -1,6 +1,7 @@
 lockfileVersion: 5.4
 
 specifiers:
+  '@kareszklub/roblib-encoder-wasm': link:../roblib-rs/encoder-wasm/pkg
   '@tsconfig/node16': ^1.0.3
   '@types/ws': ^8.5.3
   esbuild: ^0.14.49
@@ -8,6 +9,7 @@ specifiers:
   ws: ^8.8.0
 
 dependencies:
+  '@kareszklub/roblib-encoder-wasm': link:../roblib-rs/encoder-wasm/pkg
   ws: 8.8.0
 
 devDependencies:

@@ -14,6 +14,7 @@
         "node": ">=14.8"
     },
     "dependencies": {
+        "@kareszklub/roblib-encoder-wasm": "link:../roblib-rs/encoder-wasm/pkg",
         "ws": "^8.8.0"
     },
     "devDependencies": {
