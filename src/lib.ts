@@ -19,7 +19,7 @@ export class Robot {
     private constructor(
         ws: typeof window.WebSocket,
         addr: string,
-        useWasm = false
+        useWasm: boolean
     ) {
         this.ws = new ws(addr);
         this.useWasm = useWasm;
