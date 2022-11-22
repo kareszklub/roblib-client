@@ -1,6 +1,6 @@
 {
     "name": "@kareszklub/roblib-client",
-    "version": "2.0.0-beta.2",
+    "version": "2.0.0-beta.3",
     "description": "A remote library for a dank engine.",
     "license": "LGPL-3.0",
     "main": "out/lib.js",
@@ -14,6 +14,7 @@
         "node": ">=14.8"
     },
     "dependencies": {
+        "@kareszklub/roblib-encoder-wasm": "^0.1.0",
         "ws": "^8.8.0"
     },
     "devDependencies": {

@@ -1,6 +1,7 @@
 lockfileVersion: 5.4
 
 specifiers:
+  '@kareszklub/roblib-encoder-wasm': ^0.1.0
   '@tsconfig/node16': ^1.0.3
   '@types/ws': ^8.5.3
   esbuild: ^0.14.49
@@ -8,6 +9,7 @@ specifiers:
   ws: ^8.8.0
 
 dependencies:
+  '@kareszklub/roblib-encoder-wasm': 0.1.0
   ws: 8.8.0
 
 devDependencies:
@@ -17,6 +19,10 @@ devDependencies:
   typescript: 4.7.4
 
 packages:
+
+  /@kareszklub/roblib-encoder-wasm/0.1.0:
+    resolution: {integrity: sha512-XnbFN6VQ6iafvOBF6nLae0hmCf6Tygzv12cHT2CvDhDQ1j1CLJSh1zRJ1MYX/we5txz7Hj6sNz21mNsCdNOOGg==}
+    dev: false
 
   /@tsconfig/node16/1.0.3:
     resolution: {integrity: sha512-yOlFc+7UtL/89t2ZhjPvvB/DeAr3r+Dq58IgzsFkOAvVC6NMJXmCGjbptdXdR9qsX7pKcTL+s87FtYREi2dEEQ==}
